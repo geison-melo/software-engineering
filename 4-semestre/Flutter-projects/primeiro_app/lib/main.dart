@@ -91,7 +91,7 @@ class HomeScreen extends StatelessWidget {
               leading: Icon(
                 Icons.description_outlined,
                 color: Theme.of(context).colorScheme.primary,
-                size: 32,
+                size: 24,
               ),
               title: Text(
                 anotacao.titulo,
