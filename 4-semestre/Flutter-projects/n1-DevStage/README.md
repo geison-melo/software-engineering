@@ -1,12 +1,12 @@
-# DevStage 🚀
+# DevStage
 
 Aplicativo gamificado para ensino de **Flutter, Dart e Firebase**, onde o usuário progride na carreira como um estagiário de desenvolvimento mobile.
 
-> Projeto acadêmico da disciplina de Desenvolvimento de Dispositivos Móveis — 4º Semestre.
+> Projeto acadêmico da disciplina de Desenvolvimento de Dispositivos Móveis — 4 Semestre.
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
-O DevStage transforma o aprendizado de desenvolvimento mobile em uma jornada de carreira gamificada. O usuário começa como **Estagiário** e avança pelos níveis **Júnior → Pleno → Sênior** conforme conclui módulos, quizzes e missões.
+O DevStage transforma o aprendizado de desenvolvimento mobile em uma jornada de carreira gamificada. O usuário começa como **Estagiário** e avança pelos níveis **Júnior, Pleno e Sênior** conforme conclui módulos, quizzes e missões.
 
 ### Mecânicas de Gamificação
 - **XP (Experiência):** Acumulado ao completar leituras, quizzes e desafios práticos.
@@ -15,13 +15,13 @@ O DevStage transforma o aprendizado de desenvolvimento mobile em uma jornada de 
 - **Streak Diário:** Bônus por dias consecutivos de uso.
 - **Missões:** Objetivos com recompensas em XP.
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 - [Flutter](https://flutter.dev/) — SDK de UI multiplataforma
 - [Dart](https://dart.dev/) — Linguagem de programação
 - [Google Fonts](https://pub.dev/packages/google_fonts) — Tipografia (Inter / JetBrains Mono)
 
-## 📱 Telas
+## Telas
 
 | Tela | Descrição |
 |------|-----------|
@@ -33,7 +33,7 @@ O DevStage transforma o aprendizado de desenvolvimento mobile em uma jornada de 
 | Missões | Lista de missões por status (andamento/disponíveis/concluídas) |
 | Perfil | Dados do usuário, insígnias e histórico |
 
-## 🚀 Como Executar
+## Como Executar
 
 ```bash
 # Clone o repositório
@@ -52,7 +52,7 @@ flutter run -d chrome
 flutter build apk
 ```
 
-## 👥 Integrantes
+## Integrantes
 
 - Gabriel Massaia
 - Geison Melo
