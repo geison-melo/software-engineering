@@ -16,11 +16,32 @@ class QuizScreen extends StatefulWidget {
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
-class _QuizScreenState extends State<QuizScreen> {
+class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   int _currentQuestion = 0;
   int? _selectedIndex;
-  bool _isAnswerChecked = false;
+  bool _isTransitioning = false;
   int _totalXP = 0;
+
+  // Overlay feedback
+  bool _showOverlay = false;
+  bool? _lastAnswerCorrect;
+  late AnimationController _overlayController;
+  late Animation<double> _overlayFade;
+  late Animation<double> _overlayScale;
+
+  @override
+  void initState() {
+    super.initState();
+    _overlayController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+    _overlayFade = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: _overlayController, curve: Curves.easeOut));
+    _overlayScale = Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(parent: _overlayController, curve: Curves.elasticOut));
+  }
+
+  @override
+  void dispose() {
+    _overlayController.dispose();
+    super.dispose();
+  }
 
   List<_QuizQuestion> get _questions {
     if (widget.moduleTitle == 'Dart Básico') {
@@ -67,6 +88,44 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
+  void _checkAndAdvance() {
+    if (_selectedIndex == null || _isTransitioning) return;
+
+    final questions = _questions;
+    final q = questions[_currentQuestion];
+    bool isCorrect = _selectedIndex == q.correctIndex;
+
+    setState(() {
+      _isTransitioning = true;
+      _lastAnswerCorrect = isCorrect;
+      _showOverlay = true;
+      if (isCorrect) _totalXP += 10;
+    });
+
+    _overlayController.forward(from: 0);
+
+    Future.delayed(const Duration(milliseconds: 1600), () {
+      if (!mounted) return;
+      _overlayController.reverse().then((_) {
+        if (!mounted) return;
+        if (_currentQuestion < questions.length - 1) {
+          setState(() {
+            _currentQuestion++;
+            _selectedIndex = null;
+            _showOverlay = false;
+            _isTransitioning = false;
+          });
+        } else {
+          setState(() {
+            _showOverlay = false;
+            _isTransitioning = false;
+          });
+          _showCompletionDialog(context);
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final questions = _questions;
@@ -75,216 +134,219 @@ class _QuizScreenState extends State<QuizScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.home_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text('Quiz - ${widget.moduleTitle}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Progress bar
-            Row(
+      body: Stack(
+        children: [
+          // Conteúdo do Quiz
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.grey[800],
-                      color: const Color(0xFF7C3AED),
-                      minHeight: 8,
-                    ),
-                  ),
+                // Título da questão
+                Text(
+                  'Questão ${_currentQuestion + 1}',
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF06B6D4)),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(width: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF7C3AED).withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${_currentQuestion + 1}/${questions.length}',
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF7C3AED), fontSize: 13),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
+                const SizedBox(height: 12),
 
-            // Question card
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E1048), Color(0xFF1E293B)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFF7C3AED).withOpacity(0.25)),
-              ),
-              child: Text(
-                q.question,
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, height: 1.4),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Options
-            ...List.generate(q.options.length, (index) {
-              bool isSelected = _selectedIndex == index;
-              bool isCorrect = index == q.correctIndex;
-              String letter = String.fromCharCode(65 + index);
-
-              Color bgColor = const Color(0xFF1E293B);
-              Color borderColor = Colors.grey[800]!;
-              Color letterBg = Colors.grey[800]!;
-              Color letterColor = Colors.grey;
-
-              if (_isAnswerChecked) {
-                if (index == _selectedIndex) {
-                  bgColor = isCorrect ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1);
-                  borderColor = isCorrect ? Colors.green : Colors.red;
-                  letterBg = isCorrect ? Colors.green : Colors.red;
-                  letterColor = Colors.white;
-                } else if (isCorrect) {
-                  bgColor = Colors.green.withOpacity(0.06);
-                  borderColor = Colors.green.withOpacity(0.5);
-                  letterBg = Colors.green.withOpacity(0.3);
-                  letterColor = Colors.green;
-                }
-              } else if (isSelected) {
-                borderColor = const Color(0xFF06B6D4);
-                letterBg = const Color(0xFF06B6D4);
-                letterColor = Colors.white;
-              }
-
-              return GestureDetector(
-                onTap: _isAnswerChecked ? null : () => setState(() => _selectedIndex = index),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    border: Border.all(color: borderColor, width: 1.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: letterBg,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(child: Text(letter, style: TextStyle(fontWeight: FontWeight.w700, color: letterColor))),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          q.options[index].substring(3), // Remove "A) " prefix
-                          style: const TextStyle(fontSize: 14, color: Colors.white),
-                        ),
-                      ),
-                      if (_isAnswerChecked && (isSelected || isCorrect))
-                        Icon(
-                          isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                          color: isCorrect ? Colors.green : Colors.red,
-                          size: 20,
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-
-            const Spacer(),
-
-            // Feedback
-            if (_isAnswerChecked && _selectedIndex != null)
-              Container(
-                padding: const EdgeInsets.all(14),
-                margin: const EdgeInsets.only(bottom: 14),
-                decoration: BoxDecoration(
-                  color: (_selectedIndex == q.correctIndex ? Colors.green : Colors.red).withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: (_selectedIndex == q.correctIndex ? Colors.green : Colors.red).withOpacity(0.3)),
-                ),
-                child: Row(
+                // Progress bar + counter
+                Row(
                   children: [
-                    Icon(
-                      _selectedIndex == q.correctIndex ? Icons.check_circle_rounded : Icons.info_outline_rounded,
-                      color: _selectedIndex == q.correctIndex ? Colors.green : Colors.red,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
                     Expanded(
-                      child: Text(
-                        _selectedIndex == q.correctIndex ? 'Correto! +10 XP' : 'Incorreto. A resposta certa é a opção ${String.fromCharCode(65 + q.correctIndex)}.',
-                        style: TextStyle(
-                          color: _selectedIndex == q.correctIndex ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          backgroundColor: Colors.grey[800],
+                          color: const Color(0xFF7C3AED),
+                          minHeight: 8,
                         ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF7C3AED).withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${_currentQuestion + 1}/${questions.length}',
+                        style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF7C3AED), fontSize: 13),
                       ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 24),
 
-            // Button
-            Container(
-              decoration: BoxDecoration(
-                gradient: _selectedIndex != null
-                    ? const LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)])
-                    : null,
-                color: _selectedIndex == null ? Colors.grey[800] : null,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                // Question card
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF1E1048), Color(0xFF1E293B)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF7C3AED).withOpacity(0.25)),
+                  ),
+                  child: Text(
+                    q.question,
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, height: 1.4),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                onPressed: _selectedIndex == null ? null : () {
-                  if (!_isAnswerChecked) {
-                    setState(() {
-                      _isAnswerChecked = true;
-                      if (_selectedIndex == q.correctIndex) _totalXP += 10;
-                    });
-                  } else {
-                    if (_currentQuestion < questions.length - 1) {
-                      setState(() {
-                        _currentQuestion++;
-                        _selectedIndex = null;
-                        _isAnswerChecked = false;
-                      });
-                    } else {
-                      _showCompletionDialog(context);
-                    }
+                const SizedBox(height: 24),
+
+                // Options
+                ...List.generate(q.options.length, (index) {
+                  bool isSelected = _selectedIndex == index;
+                  String letter = String.fromCharCode(65 + index);
+
+                  Color bgColor = const Color(0xFF1E293B);
+                  Color borderColor = Colors.grey[800]!;
+                  Color letterBg = Colors.grey[800]!;
+                  Color letterColor = Colors.grey;
+
+                  if (isSelected) {
+                    borderColor = const Color(0xFF06B6D4);
+                    letterBg = const Color(0xFF06B6D4);
+                    letterColor = Colors.white;
                   }
-                },
-                child: Text(
-                  !_isAnswerChecked
-                      ? 'Verificar'
-                      : (_currentQuestion < questions.length - 1 ? 'Próxima' : 'Finalizar Quiz'),
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: _selectedIndex != null ? Colors.white : Colors.grey,
+
+                  return GestureDetector(
+                    onTap: _isTransitioning ? null : () => setState(() => _selectedIndex = index),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        border: Border.all(color: borderColor, width: 1.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: letterBg,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(child: Text(letter, style: TextStyle(fontWeight: FontWeight.w700, color: letterColor))),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              q.options[index].substring(3),
+                              style: const TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+
+                const Spacer(),
+
+                // Button
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: (_selectedIndex != null && !_isTransitioning)
+                        ? const LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)])
+                        : null,
+                    color: (_selectedIndex == null || _isTransitioning) ? Colors.grey[800] : null,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: (_selectedIndex == null || _isTransitioning) ? null : _checkAndAdvance,
+                    child: Text(
+                      'Confirmar',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: (_selectedIndex != null && !_isTransitioning) ? Colors.white : Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Overlay de feedback (acerto/erro)
+          if (_showOverlay)
+            FadeTransition(
+              opacity: _overlayFade,
+              child: Container(
+                color: Colors.black.withOpacity(0.7),
+                child: Center(
+                  child: ScaleTransition(
+                    scale: _overlayScale,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (_lastAnswerCorrect! ? Colors.green : Colors.red).withOpacity(0.15),
+                            border: Border.all(
+                              color: _lastAnswerCorrect! ? Colors.green : Colors.red,
+                              width: 3,
+                            ),
+                          ),
+                          child: Icon(
+                            _lastAnswerCorrect! ? Icons.check_rounded : Icons.close_rounded,
+                            size: 64,
+                            color: _lastAnswerCorrect! ? Colors.green : Colors.red,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          _lastAnswerCorrect! ? 'Correto!' : 'Incorreto',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                            color: _lastAnswerCorrect! ? Colors.green : Colors.red,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _lastAnswerCorrect!
+                              ? '+10 XP'
+                              : 'Resposta: ${String.fromCharCode(65 + _questions[_currentQuestion].correctIndex)}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: (_lastAnswerCorrect! ? Colors.green : Colors.red).withOpacity(0.8),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

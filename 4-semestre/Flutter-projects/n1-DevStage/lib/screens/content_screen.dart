@@ -234,6 +234,19 @@ class _ContentScreenState extends State<ContentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.moduleTitle),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (_currentPage > 0) {
+              _pageController.previousPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            } else {
+              Navigator.pop(context);
+            }
+          },
+        ),
       ),
       body: Column(
         children: [
