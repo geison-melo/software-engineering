@@ -143,151 +143,153 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       body: Stack(
         children: [
           // Conteúdo do Quiz
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Título da questão
-                Text(
-                  'Questão ${_currentQuestion + 1}',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF06B6D4)),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Título da questão
+                  Text(
+                    'Questão ${_currentQuestion + 1}',
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF06B6D4)),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
 
-                // Progress bar + counter
-                Row(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          backgroundColor: Colors.grey[800],
-                          color: const Color(0xFF7C3AED),
-                          minHeight: 8,
+                  // Progress bar + counter
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.grey[800],
+                            color: const Color(0xFF7C3AED),
+                            minHeight: 8,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7C3AED).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${_currentQuestion + 1}/${questions.length}',
+                          style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF7C3AED), fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Question card
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1E1048), Color(0xFF1E293B)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFF7C3AED).withOpacity(0.25)),
+                    ),
+                    child: Text(
+                      q.question,
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, height: 1.4),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Options
+                  ...List.generate(q.options.length, (index) {
+                    bool isSelected = _selectedIndex == index;
+                    String letter = String.fromCharCode(65 + index);
+
+                    Color bgColor = const Color(0xFF1E293B);
+                    Color borderColor = Colors.grey[800]!;
+                    Color letterBg = Colors.grey[800]!;
+                    Color letterColor = Colors.grey;
+
+                    if (isSelected) {
+                      borderColor = const Color(0xFF06B6D4);
+                      letterBg = const Color(0xFF06B6D4);
+                      letterColor = Colors.white;
+                    }
+
+                    return GestureDetector(
+                      onTap: _isTransitioning ? null : () => setState(() => _selectedIndex = index),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          border: Border.all(color: borderColor, width: 1.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: letterBg,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(child: Text(letter, style: TextStyle(fontWeight: FontWeight.w700, color: letterColor))),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                q.options[index].substring(3),
+                                style: const TextStyle(fontSize: 14, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+
+                  const Spacer(),
+
+                  // Button
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: (_selectedIndex != null && !_isTransitioning)
+                          ? const LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)])
+                          : null,
+                      color: (_selectedIndex == null || _isTransitioning) ? Colors.grey[800] : null,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: (_selectedIndex == null || _isTransitioning) ? null : _checkAndAdvance,
+                      child: Text(
+                        'Confirmar',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: (_selectedIndex != null && !_isTransitioning) ? Colors.white : Colors.grey,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${_currentQuestion + 1}/${questions.length}',
-                        style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF7C3AED), fontSize: 13),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Question card
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1E1048), Color(0xFF1E293B)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFF7C3AED).withOpacity(0.25)),
                   ),
-                  child: Text(
-                    q.question,
-                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, height: 1.4),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Options
-                ...List.generate(q.options.length, (index) {
-                  bool isSelected = _selectedIndex == index;
-                  String letter = String.fromCharCode(65 + index);
-
-                  Color bgColor = const Color(0xFF1E293B);
-                  Color borderColor = Colors.grey[800]!;
-                  Color letterBg = Colors.grey[800]!;
-                  Color letterColor = Colors.grey;
-
-                  if (isSelected) {
-                    borderColor = const Color(0xFF06B6D4);
-                    letterBg = const Color(0xFF06B6D4);
-                    letterColor = Colors.white;
-                  }
-
-                  return GestureDetector(
-                    onTap: _isTransitioning ? null : () => setState(() => _selectedIndex = index),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: bgColor,
-                        border: Border.all(color: borderColor, width: 1.5),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: letterBg,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(child: Text(letter, style: TextStyle(fontWeight: FontWeight.w700, color: letterColor))),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              q.options[index].substring(3),
-                              style: const TextStyle(fontSize: 14, color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-
-                const Spacer(),
-
-                // Button
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: (_selectedIndex != null && !_isTransitioning)
-                        ? const LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)])
-                        : null,
-                    color: (_selectedIndex == null || _isTransitioning) ? Colors.grey[800] : null,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: (_selectedIndex == null || _isTransitioning) ? null : _checkAndAdvance,
-                    child: Text(
-                      'Confirmar',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: (_selectedIndex != null && !_isTransitioning) ? Colors.white : Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 

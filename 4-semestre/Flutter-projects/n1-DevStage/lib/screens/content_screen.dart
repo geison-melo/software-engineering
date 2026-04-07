@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'quiz_screen.dart';
+import '../routes/app_routes.dart';
 
 class ContentScreen extends StatefulWidget {
   final String moduleTitle;
@@ -248,65 +248,68 @@ class _ContentScreenState extends State<ContentScreen> {
           },
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '${_currentPage + 1} de ${pages.length}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                '${_currentPage + 1} de ${pages.length}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              children: pages,
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                children: pages,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                LinearProgressIndicator(
-                  value: (_currentPage + 1) / pages.length,
-                  backgroundColor: Colors.grey[800],
-                  color: const Color(0xFF06B6D4),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  LinearProgressIndicator(
+                    value: (_currentPage + 1) / pages.length,
+                    backgroundColor: Colors.grey[800],
+                    color: const Color(0xFF06B6D4),
                   ),
-                  onPressed: () {
-                    if (_currentPage < pages.length - 1) {
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => QuizScreen(moduleTitle: widget.moduleTitle)),
-                      );
-                    }
-                  },
-                  child: Text(
-                    _currentPage < pages.length - 1 ? 'Próximo' : 'Ir para o Quiz',
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7C3AED),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: () {
+                      if (_currentPage < pages.length - 1) {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.quiz,
+                          arguments: widget.moduleTitle,
+                        );
+                      }
+                    },
+                    child: Text(
+                      _currentPage < pages.length - 1 ? 'Próximo' : 'Ir para o Quiz',
+                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

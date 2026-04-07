@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/splash_screen.dart';
+import 'routes/app_routes.dart';
 
 void main() {
   runApp(const DevStageApp());
@@ -44,7 +44,8 @@ class DevStageApp extends StatelessWidget {
           elevation: 4,
         ),
       ),
-      home: const SplashScreen(),
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

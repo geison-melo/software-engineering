@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'content_screen.dart';
-import 'login_screen.dart';
+import '../routes/app_routes.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,9 +11,9 @@ class HomeScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
+            Navigator.pushNamedAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
+              AppRoutes.login,
               (route) => false,
             );
           },
@@ -161,7 +160,7 @@ class HomeScreen extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
           onTap: isLocked ? null : () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ContentScreen(moduleTitle: title)));
+            Navigator.pushNamed(context, AppRoutes.content, arguments: title);
           },
           child: Padding(
             padding: const EdgeInsets.all(16),

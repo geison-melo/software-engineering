@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
+import '../routes/app_routes.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -108,9 +108,9 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: TextButton.icon(
                   onPressed: () {
-                    Navigator.pushAndRemoveUntil(
+                    Navigator.pushNamedAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      AppRoutes.login,
                       (route) => false,
                     );
                   },

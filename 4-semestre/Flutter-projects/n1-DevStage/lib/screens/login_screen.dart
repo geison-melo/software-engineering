@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main_layout.dart';
+import '../routes/app_routes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,10 +12,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLogin = true;
 
   void _navigate() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MainLayout()),
-    );
+    Navigator.pushReplacementNamed(context, AppRoutes.main);
   }
 
   @override
