@@ -1,0 +1,15 @@
+# ---------------------------------------------------------------------------
+# Projetos com repositorio git proprio
+#
+# Cada uma destas pastas tem seu proprio .git e seu proprio remote no GitHub.
+# O git nao entra numa pasta que tem .git dentro, entao um "git add ." aqui
+# nao adicionaria os arquivos: criaria um gitlink (submodulo quebrado) que
+# grava so o hash do commit, sem dizer de onde buscar. No GitHub isso vira
+# uma pasta cinza que nao abre, e quem clonar recebe um diretorio vazio.
+#
+# Ignorar nao perde nada: cada projeto ja esta salvo no proprio repositorio.
+# ---------------------------------------------------------------------------
+
+4-semestre/N3 - Dev Mobile/codequest/
+4-semestre/N3 - Ger Config Proc de Software/projeto-n3/
+5-semestre/programacao-web/seminario-nextjs/
