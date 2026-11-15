@@ -12,8 +12,7 @@ import re
 import subprocess
 from pathlib import Path
 
-INTEGRANTES = ["GEISON CARLOS MELO", "[INTEGRANTE 2]", "[INTEGRANTE 3]", "[INTEGRANTE 4]",
-               "[INTEGRANTE 5 – se houver]"]
+INTEGRANTES = ["GABRIEL MASSAIA DE OLIVEIRA", "GEISON CARLOS MELO", "LEONARDO MATEUS ANDERS", "THIAGO LUIS LOMBARDI MAES"]
 TURMA = "[PREENCHER TURMA]"
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 HT = []      # corpo do HTML

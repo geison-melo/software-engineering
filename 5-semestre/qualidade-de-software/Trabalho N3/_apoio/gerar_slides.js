@@ -6,7 +6,7 @@ const path = require("path");
 const pptxgen = require("pptxgenjs");
 const { applyTheme } = require("./apply_theme.js");
 
-const INTEGRANTES = ["Geison Carlos Melo", "[Integrante 2]", "[Integrante 3]", "[Integrante 4]", "[Integrante 5]"];
+const INTEGRANTES = ["Gabriel Massaia de Oliveira", "Geison Carlos Melo", "Leonardo Mateus Anders", "Thiago Luis Lombardi Maes"];
 const TURMA = "[preencher turma]";
 
 const S = JSON.parse(fs.readFileSync(path.join(__dirname, "dados", "stats.json"), "utf8"));
