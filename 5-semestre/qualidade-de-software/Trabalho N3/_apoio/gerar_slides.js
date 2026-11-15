@@ -481,7 +481,6 @@ const L = S.lead, D = S.dispersao, PA = S.pareto, EB = S.estado_bugs;
   txt(s, `FOLHA ${TOTAL}/${TOTAL} · FIM DA INSPEÇÃO`, { x: MX, y: 0.55, w: 9, h: 0.3, fontFace: F.mono, fontSize: 12, color: C.dim, charSpacing: 1 });
   txt(s, "EQUIPE", { x: MX, y: 3.3, w: 3, h: 0.3, fontFace: F.mono, fontSize: 11, bold: true, color: C.red, charSpacing: 2 });
   txt(s, INTEGRANTES.map((n, i) => ({ text: n, options: { breakLine: i < INTEGRANTES.length - 1 } })), { x: MX, y: 3.65, w: 7, h: 1.6, fontSize: 17, color: C.white, paraSpaceAfter: 3, valign: "top" });
-  txt(s, "DADOS E SCRIPTS REPRODUZÍVEIS NA PASTA _APOIO · RELATÓRIO COMPLETO EM PDF", { x: MX, y: 6.75, w: W - 2 * MX, h: 0.3, fontFace: F.mono, fontSize: 11, color: C.dim });
   notas(s, "Perguntas prováveis e respostas curtas:\n1) Por que Spearman e não Pearson? Porque os dados são muito assimétricos; Spearman usa a ordem e não é dominado por poucos valores extremos.\n2) O Pareto não deu 80/20 exato, está errado? Não: 80/20 é uma regra empírica; aqui 40% das categorias somam ~80%, o que já permite priorizar.\n3) Os dados são confiáveis? São públicos e brutos do GitHub; limitações: só PRs mesclados, rótulos incompletos e 2026 ainda não terminou.\n4) Por que média não serve no histograma? A cauda longa puxa a média para 114 h, enquanto o PR típico leva 7 h.\n5) Qual ferramenta resolveria o caso Knight? Uma folha de verificação de implantação, além de automação do deploy.");
 }
 
