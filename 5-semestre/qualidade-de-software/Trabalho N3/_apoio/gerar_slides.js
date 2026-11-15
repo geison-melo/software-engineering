@@ -10,7 +10,7 @@ const INTEGRANTES = ["Gabriel Massaia de Oliveira", "Geison Carlos Melo", "Leona
 
 const S = JSON.parse(fs.readFileSync(path.join(__dirname, "dados", "stats.json"), "utf8"));
 const FIG = (f) => path.join(__dirname, "figuras", f);
-const OUT = path.join(__dirname, "..", "Apresentacao - Ferramentas da Qualidade.pptx");
+const OUT = path.join(__dirname, "..", "Apresentação N3 - Ferramentas da Qualidade.pptx");
 const br = (v, c = 1) => v.toFixed(c).replace(".", ",");
 
 const THEME = {
