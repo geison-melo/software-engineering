@@ -270,7 +270,8 @@ def centro(texto, negrito=False, tam=12, antes=0, depois=0, maiusc=True):
 # ============================================================ CAPA
 centro("Centro Universitário Católica de Santa Catarina", True)
 centro("Curso de Engenharia de Software", True)
-centro("Qualidade de Software – Prof. Martim Dietterle", False, depois=60)
+centro("Qualidade de Software – Prof. Martim Dietterle", False, depois=0)
+centro("Turma: Engenharia de Software – 5º semestre (2026/2)", False, depois=60, maiusc=False)
 centro("Ferramentas da qualidade aplicadas à engenharia de software", True, 14, antes=40)
 centro("da teoria aos dados reais: LocalSend, CrowdStrike e Knight Capital", False, 12, depois=60,
        maiusc=False)
