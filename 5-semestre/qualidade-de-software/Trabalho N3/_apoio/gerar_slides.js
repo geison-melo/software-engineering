@@ -1,13 +1,12 @@
 // Gera a apresentação do seminário (Trabalho N3 - Qualidade de Software).
 // Uso: node gerar_slides.js   (depois de python analisar_dados.py)
-// Nomes da equipe e turma: edite INTEGRANTES e TURMA abaixo.
+// Nomes da equipe: edite INTEGRANTES abaixo.
 const fs = require("fs");
 const path = require("path");
 const pptxgen = require("pptxgenjs");
 const { applyTheme } = require("./apply_theme.js");
 
 const INTEGRANTES = ["Gabriel Massaia de Oliveira", "Geison Carlos Melo", "Leonardo Mateus Anders", "Thiago Luis Lombardi Maes"];
-const TURMA = "[preencher turma]";
 
 const S = JSON.parse(fs.readFileSync(path.join(__dirname, "dados", "stats.json"), "utf8"));
 const FIG = (f) => path.join(__dirname, "figuras", f);
@@ -93,7 +92,7 @@ const L = S.lead, D = S.dispersao, PA = S.pareto, EB = S.estado_bugs;
   s.addText("QUALIDADE DE SOFTWARE · TRABALHO N3", { x: MX, y: 0.6, w: 8, h: 0.4, fontSize: 14, bold: true, color: C.soft, charSpacing: 2, margin: 0, isTextBox: true });
   s.addText("Da teoria aos dados reais: LocalSend, CrowdStrike e Knight Capital", { x: MX, y: 2.95, w: 11, h: 0.6, fontSize: 22, color: C.white, italic: true, margin: 0, isTextBox: true });
   s.addText(INTEGRANTES.join("  ·  "), { x: MX, y: 4.9, w: W - 2 * MX, h: 0.5, fontSize: 16, color: C.white, margin: 0, isTextBox: true });
-  s.addText(`Engenharia de Software · Prof. Martim Dietterle · Turma ${TURMA} · 18/11/2026`, { x: MX, y: 5.45, w: W - 2 * MX, h: 0.4, fontSize: 14, color: C.soft, margin: 0, isTextBox: true });
+  s.addText(`Engenharia de Software · Prof. Martim Dietterle · 18/11/2026`, { x: MX, y: 5.45, w: W - 2 * MX, h: 0.4, fontSize: 14, color: C.soft, margin: 0, isTextBox: true });
   s.addText("Católica de Santa Catarina · Jaraguá do Sul – SC", { x: MX, y: 6.6, w: 8, h: 0.35, fontSize: 12, color: C.soft, margin: 0, isTextBox: true });
   notas(s, "Abertura (quem apresenta: 1º integrante). Apresentar a equipe e a proposta: aplicar as ferramentas da qualidade a dados reais, e não só a exemplos inventados. O fio condutor é o LocalSend, o mesmo app avaliado no Trabalho N2, agora visto pelo lado do processo.");
 }

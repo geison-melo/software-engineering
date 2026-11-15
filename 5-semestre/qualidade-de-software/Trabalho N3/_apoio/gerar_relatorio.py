@@ -4,7 +4,7 @@ Cada função auxiliar escreve ao mesmo tempo no .docx (editável no Word) e em 
 que o Microsoft Edge imprime em PDF (o Word trava ao exportar PDF por automação nesta
 máquina). O sumário do PDF sai em duas passadas: imprime, lê a página de cada título e
 imprime de novo. Os números vêm de dados/stats.json (analisar_dados.py).
-Para trocar os nomes da equipe ou a turma, edite INTEGRANTES e TURMA e rode de novo.
+Para trocar os nomes da equipe, edite INTEGRANTES e rode de novo.
 """
 import html as _html
 import json
@@ -13,7 +13,6 @@ import subprocess
 from pathlib import Path
 
 INTEGRANTES = ["GABRIEL MASSAIA DE OLIVEIRA", "GEISON CARLOS MELO", "LEONARDO MATEUS ANDERS", "THIAGO LUIS LOMBARDI MAES"]
-TURMA = "[PREENCHER TURMA]"
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 HT = []      # corpo do HTML
 SUM = []     # (nível, id, texto) para o sumário do PDF
@@ -271,8 +270,7 @@ def centro(texto, negrito=False, tam=12, antes=0, depois=0, maiusc=True):
 # ============================================================ CAPA
 centro("Centro Universitário Católica de Santa Catarina", True)
 centro("Curso de Engenharia de Software", True)
-centro("Qualidade de Software – Prof. Martim Dietterle", False, depois=0)
-centro(f"Turma: {TURMA}", False, depois=60, maiusc=False)
+centro("Qualidade de Software – Prof. Martim Dietterle", False, depois=60)
 centro("Ferramentas da qualidade aplicadas à engenharia de software", True, 14, antes=40)
 centro("da teoria aos dados reais: LocalSend, CrowdStrike e Knight Capital", False, 12, depois=60,
        maiusc=False)
