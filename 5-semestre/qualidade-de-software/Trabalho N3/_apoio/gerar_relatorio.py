@@ -32,7 +32,7 @@ from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
 
 BASE = Path(__file__).parent
-OUT = BASE.parent / "Relatorio - Ferramentas da Qualidade.docx"
+OUT = BASE.parent / "Relatório N3 - Ferramentas da Qualidade.docx"
 S = json.load(open(BASE / "dados/stats.json", encoding="utf-8"))
 L, D, PA = S["lead"], S["dispersao"], S["pareto"]
 EB = S["estado_bugs"]
@@ -310,7 +310,9 @@ H1("1 Introdução")
 P("Qualidade de software não é uma etapa que acontece no fim do projeto: é o resultado de decisões tomadas "
   "ao longo de todo o processo. Bartié (2002) define garantia da qualidade como um conjunto de atividades "
   "planejadas e sistemáticas que dão confiança de que o processo produz o que se espera dele, e Pfleeger "
-  "(2003) lembra que a qualidade do produto depende diretamente da qualidade do processo que o produz. Para "
+  "(2003) lembra que a qualidade do produto depende diretamente da qualidade do processo que o produz. "
+  "Guerra e Colombo (2010) mostram que a qualidade do produto pode ser descrita por características "
+  "mensuráveis, como confiabilidade, usabilidade e eficiência. Para "
   "melhorar um processo, porém, é preciso enxergá-lo, medi-lo e entender por que ele falha. É para isso que "
   "servem as ferramentas da qualidade, sistematizadas por Kaoru Ishikawa na indústria japonesa e hoje "
   "presentes, com outros nomes, no dia a dia dos times de software: o quadro Kanban é um fluxograma vivo, o "
@@ -326,15 +328,12 @@ P("A base empírica principal é o **LocalSend**, aplicativo de código aberto p
   "escolhido por três motivos: tem histórico público e completo de defeitos e de mudanças, é um produto "
   "real usado por milhões de pessoas (o repositório passa de 99 mil estrelas no GitHub) e já foi avaliado "
   "pela equipe no Trabalho N2, sob a ótica da qualidade do produto. Agora o foco é o processo.")
-P(f"Os dados foram extraídos em 15/11/2026 pela API GraphQL do GitHub: {S['n_prs']} pull requests (PRs) "
+P(f"Os dados foram extraídos em 15/11/2026 pela API GraphQL do GitHub (LOCALSEND, 2026): {S['n_prs']} pull requests (PRs) "
   "mesclados entre janeiro de 2023 e novembro de 2026, com datas de abertura e de merge e o número de linhas "
   f"alteradas, e {S['n_bugs']} issues com o rótulo *bug*, com estado, motivo de fechamento e rótulos de "
   "plataforma. Os scripts de coleta e de análise acompanham a entrega (pasta _apoio), o que permite "
   "reproduzir todos os números citados. Os estudos de caso da indústria usam os relatórios oficiais das "
   "empresas e dos órgãos reguladores, citados nas referências.")
-P("O texto está organizado assim: a seção 2 discute a qualidade em metodologias ágeis; a seção 3 lista e "
-  "classifica as ferramentas da qualidade; as seções 4 a 9 aplicam cada ferramenta; a seção 10 apresenta os "
-  "estudos de caso; e a seção 11 conclui com o plano de melhoria contínua.")
 
 # ============================================================ 2 ÁGIL
 H1("2 Qualidade em metodologias ágeis")
@@ -357,7 +356,7 @@ BUL([
     "de ciclo (VACANTI, 2015).",
     "**XP (Extreme Programming)** é o método mais explícito sobre práticas técnicas: desenvolvimento "
     "guiado por testes (TDD), integração contínua, programação em par, refatoração, design simples, "
-    "propriedade coletiva do código e releases pequenas (BECK, 2004; TELES, 2004).",
+    "propriedade coletiva do código e releases pequenas (BECK; ANDRES, 2004; TELES, 2004).",
 ])
 H2("2.2 Práticas que garantem a qualidade")
 TAB("quadro", "Práticas ágeis de qualidade, o que garantem e evidência real", [
@@ -380,7 +379,8 @@ H2("2.3 Exemplos da vida real e análise crítica")
 P("**Microsoft e IBM (TDD).** O estudo de Nagappan et al. (2008) comparou, em quatro produtos reais (três da "
   "Microsoft e um da IBM), times que usavam TDD com times equivalentes que não usavam, sob o mesmo gerente e "
   "com a mesma tecnologia. A redução de 40% a 90% na densidade de defeitos antes da entrega mostra que testar "
-  "primeiro melhora a qualidade de forma mensurável. **O que falhou:** o custo inicial maior (15% a 35%) e a "
+  "primeiro melhora a qualidade de forma mensurável, o que reforça a visão de Félix (2016) de que o "
+  "teste deve acompanhar todo o ciclo de desenvolvimento, e não ficar só no final. **O que falhou:** o custo inicial maior (15% a 35%) e a "
   "falta de controle rigoroso sobre o quanto cada time de fato seguiu o TDD, já que são estudos de caso e não "
   "experimentos controlados. **O que poderia melhorar:** medir também a cobertura e a qualidade dos testes, e "
   "não só a adoção da prática.")
@@ -430,9 +430,27 @@ TAB("quadro", "Classificação das ferramentas da qualidade", [
     ["Complementares: 5 porquês, 5W2H, matriz GUT, PDCA", "Causa, planejamento e priorização",
      "Qual a causa última? Quem faz o quê, até quando?", "Post-mortem, plano de ação, backlog de melhoria"],
 ], [3.4, 3.0, 4.6, 5.0], "elaborado pela equipe com base em Ishikawa (1986), Gallotti (2015) e Bartié (2002).")
-P("Na prática as ferramentas se encadeiam. Neste trabalho, o fluxograma mostra onde medir; a folha de "
-  "verificação organiza a coleta; histograma e dispersão analisam a variação e as relações; o Pareto "
-  "escolhe o que atacar primeiro; e o diagrama de causa e efeito busca a causa-raiz do problema escolhido.")
+H2("3.2 Exemplo real, análise crítica e justificativa")
+P("**Exemplo real.** Ishikawa (1985) afirmava que até 95% dos problemas de qualidade de uma empresa podem ser "
+  "resolvidos com as ferramentas básicas, sem estatística avançada; foi com elas que a indústria japonesa "
+  "montou os círculos de controle da qualidade, nos quais os próprios trabalhadores analisavam os problemas. "
+  "No software, a Microsoft aplicou o Pareto aos relatórios automáticos de erro do Windows e do Office para "
+  "decidir o que corrigir primeiro (BALLMER, 2002), e a CrowdStrike publicou uma análise de causa-raiz "
+  "estruturada depois do incidente de 2024 (CROWDSTRIKE, 2024). Neste trabalho, seis das sete ferramentas "
+  f"foram aplicadas aos mesmos dados reais do LocalSend ({S['n_prs']} PRs e {S['n_bugs']} bugs) e a dois "
+  "incidentes documentados da indústria.")
+P("**Análise crítica.** O que funciona é a simplicidade: qualquer pessoa do time entende um Pareto ou um "
+  "histograma, sem precisar de um especialista. O que falha é a dependência da qualidade dos dados: no "
+  "LocalSend, cerca de 60% das issues de bug não têm plataforma registrada, o que limita o Pareto e a folha "
+  "de verificação. Além disso, as ferramentas descrevem e sugerem, mas não provam causa: uma tendência no "
+  "diagrama de dispersão ou uma espinha do Ishikawa são hipóteses a confirmar. O que poderia melhorar é "
+  "completar a análise com o gráfico de controle, que separa a variação natural de uma mudança real no "
+  "processo, e com testes estatísticos quando a decisão tiver custo alto.")
+P("**Justificativa.** A classificação por finalidade foi escolhida, em vez da lista histórica, porque mostra "
+  "em que momento do ciclo PDCA cada ferramenta entra, e é essa a ordem que o trabalho segue: o fluxograma "
+  "mostra onde medir; a folha de verificação organiza a coleta; histograma e dispersão analisam a variação e "
+  "as relações; o Pareto escolhe o que atacar primeiro; e o diagrama de causa e efeito busca a causa-raiz do "
+  "problema escolhido.")
 
 # ============================================================ 4 FLUXOGRAMA
 H1("4 Fluxograma")
@@ -662,7 +680,7 @@ P("Em 19 de julho de 2024, uma atualização de conteúdo do sensor Falcon, da C
   "hospitais (WESTON, 2024). O relatório de causa-raiz publicado pela CrowdStrike em 6 de agosto de 2024 "
   "descreve as falhas técnicas e de processo usadas na Figura 5 (CROWDSTRIKE, 2024).")
 FIG("ishikawa.png", "Diagrama de causa e efeito do incidente CrowdStrike Channel File 291",
-    "elaborado pela equipe com base em CrowdStrike (2024) e Weston (2024).", largura=16)
+    "elaborado pela equipe com base em CrowdStrike (2024) e Weston (2024).", largura=14.5)
 H2("9.3 Interpretação e 5 porquês")
 P("O diagrama mostra que não houve uma causa única. Os ramos mais carregados são **Medição/Testes** e "
   "**Método/Processo**, e é neles que estão as causas-raiz. Aplicando os 5 porquês ao efeito:")
@@ -684,13 +702,13 @@ P("A causa-raiz, portanto, é de **processo**: um artefato que se comportava com
   "anéis com canário e controle do cliente sobre quando receber as atualizações (CROWDSTRIKE, 2024).")
 H2("9.4 Análise crítica e justificativa")
 P("**O que funcionou:** a empresa reverteu a atualização em cerca de 78 minutos e publicou uma análise de "
-  "causa-raiz detalhada e pública, o que é uma boa prática de cultura sem culpados. **O que falhou:** a "
-  "recuperação exigiu intervenção manual em cada máquina, porque o defeito impedia o próprio sistema de "
-  "subir. **O que poderia ser melhorado:** tratar arquivos de configuração e de conteúdo como código, com "
-  "testes de fronteira (como o caso de 20 contra 21 campos), testes de fuzzing e implantação progressiva. "
-  "**Justificativa:** o Ishikawa foi escolhido porque o problema tinha muitas causas possíveis e de naturezas "
-  "diferentes (técnicas, de processo e organizacionais), e a ferramenta obriga a equipe a olhar todas as "
-  "categorias antes de culpar uma pessoa ou uma linha de código.")
+  "causa-raiz pública e detalhada, boa prática de cultura sem culpados. **O que falhou:** a recuperação "
+  "exigiu intervenção manual em cada máquina, porque o defeito impedia o sistema de subir. **O que poderia "
+  "ser melhorado:** tratar configuração como código, com testes de fronteira (como o caso de 20 contra 21 "
+  "campos), fuzzing e implantação progressiva; validar toda entrada, mesmo a de arquivos internos, é princípio "
+  "básico de desenvolvimento seguro (ALBUQUERQUE; RIBEIRO, 2002). **Justificativa:** o Ishikawa foi escolhido "
+  "porque o problema tinha causas de naturezas diferentes (técnicas, de processo e organizacionais), e a "
+  "ferramenta obriga a olhar todas as categorias antes de culpar uma pessoa ou uma linha de código.")
 
 # ============================================================ 10 ESTUDOS DE CASO
 H1("10 Estudos de caso")
@@ -804,6 +822,8 @@ P("Como trabalho futuro, a equipe sugere acompanhar esses indicadores com um **g
 # ============================================================ REFERÊNCIAS
 H1("Referências")
 refs = [
+    "ALBUQUERQUE, Ricardo; RIBEIRO, Bruno. **Segurança no desenvolvimento de software**: como garantir "
+    "a segurança do sistema para seu cliente usando a ISO/IEC 15408. Rio de Janeiro: Campus, 2002.",
     "ANDERSON, David J. **Kanban**: successful evolutionary change for your technology business. Sequim: "
     "Blue Hole Press, 2010.",
     "BALLMER, Steve. **Memo from Steve Ballmer to Microsoft customers**: trustworthy computing. Redmond: "
@@ -827,6 +847,8 @@ refs = [
     "GOOGLE. **Google engineering practices documentation**: how to do a code review. 2024. Disponível em: "
     "https://google.github.io/eng-practices/review/. Acesso em: 15 nov. 2026.",
     "GUERRA, Ana Cervigni; COLOMBO, Regina Maria Thienne. **Qualidade de produto de software**. 2010.",
+    "ISHIKAWA, Kaoru. **What is total quality control?** The Japanese way. Englewood Cliffs: "
+    "Prentice-Hall, 1985.",
     "ISHIKAWA, Kaoru. **Guide to quality control**. 2. ed. Tokyo: Asian Productivity Organization, 1986.",
     "JURAN, Joseph M.; GODFREY, A. Blanton. **Juran's quality handbook**. 5. ed. New York: McGraw-Hill, 1999.",
     "LOCALSEND. **localsend/localsend**: an open-source cross-platform alternative to AirDrop. GitHub, 2026. "
@@ -932,7 +954,7 @@ def montar_html(paginas, marcar=False):
 def imprimir(html_txt):
     arq_html = BASE / "relatorio.html"
     arq_html.write_text(html_txt, encoding="utf-8")
-    pdf = BASE.parent / "Relatorio - Ferramentas da Qualidade.pdf"
+    pdf = BASE.parent / "Relatório N3 - Ferramentas da Qualidade.pdf"
     subprocess.run([EDGE, "--headless=new", "--disable-gpu", "--no-pdf-header-footer",
                     f"--user-data-dir={BASE / '.edge'}", f"--print-to-pdf={pdf}", arq_html.as_uri()],
                    check=True, capture_output=True, timeout=120)

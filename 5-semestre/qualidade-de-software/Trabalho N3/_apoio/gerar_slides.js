@@ -144,15 +144,16 @@ const L = S.lead, D = S.dispersao, PA = S.pareto, EB = S.estado_bugs;
     ["Gráfico de controle", "Monitoramento", "O processo está estável?"],
     ["Complementares", "Causa e plano", "5 porquês, 5W2H, GUT, PDCA"],
   ];
-  const w = 2.85, h = 2.4, g = 0.25;
+  const w = 2.85, h = 2.2, g = 0.25;
   itens.forEach(([n, cat, q], i) => {
     const x = MX + (i % 4) * (w + g), y = 1.5 + Math.floor(i / 4) * (h + g);
     const destaque = i < 6;
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, rectRadius: 0.08, fill: { color: destaque ? C.tint : "F7F7F7" }, line: { color: destaque ? C.tint : "E5E7EB" } });
     s.addText(cat.toUpperCase(), { x: x + 0.25, y: y + 0.2, w: w - 0.5, h: 0.35, fontSize: 11, bold: true, color: destaque ? C.amber : C.muted, charSpacing: 1, margin: 0, isTextBox: true });
     s.addText(n, { x: x + 0.25, y: y + 0.6, w: w - 0.5, h: 0.55, fontSize: 20, bold: true, color: destaque ? C.teal : C.muted, margin: 0, isTextBox: true });
-    s.addText(q, { x: x + 0.25, y: y + 1.25, w: w - 0.5, h: 0.95, fontSize: 15, color: C.ink, margin: 0, valign: "top", isTextBox: true });
+    s.addText(q, { x: x + 0.25, y: y + 1.2, w: w - 0.5, h: 0.85, fontSize: 15, color: C.ink, margin: 0, valign: "top", isTextBox: true });
   });
+  s.addText("Ishikawa: até 95% dos problemas de qualidade se resolvem com as ferramentas básicas (Ishikawa, 1985). Limite: dependem de dados bem coletados.", { x: MX, y: 6.3, w: W - 2 * MX, h: 0.45, fontSize: 14, italic: true, color: C.muted, margin: 0, isTextBox: true });
   notas(s, "Origem: Kaoru Ishikawa reuniu as sete ferramentas básicas para que qualquer pessoa da empresa resolvesse a maior parte dos problemas de qualidade (Ishikawa, 1986). A classificação é por finalidade dentro do ciclo PDCA. Os seis cartões em destaque são os pedidos no trabalho e foram construídos com dados reais; o gráfico de controle fica como trabalho futuro para acompanhar o plano de ação.");
 }
 // ------------------------------------------------------------------ 6 fluxograma
@@ -390,6 +391,9 @@ const L = S.lead, D = S.dispersao, PA = S.pareto, EB = S.estado_bugs;
     "GALLOTTI, G. M. A. (org.). Qualidade de software. Pearson, 2015.",
     "FÉLIX, R. (org.). Teste de software. Pearson, 2016.",
     "FERNANDES, A. A.; ABREU, V. F. Implantando a governança de TI. Brasport, 2014.",
+    "GUERRA, A. C.; COLOMBO, R. M. T. Qualidade de produto de software, 2010.",
+    "ALBUQUERQUE, R.; RIBEIRO, B. Segurança no desenvolvimento de software. Campus, 2002.",
+    "ISHIKAWA, K. What is total quality control? Prentice-Hall, 1985.",
     "ISHIKAWA, K. Guide to quality control. APO, 1986.",
     "SCHWABER, K.; SUTHERLAND, J. The Scrum Guide, 2020.",
     "VACANTI, D. Actionable agile metrics for predictability, 2015.",
@@ -407,7 +411,7 @@ const L = S.lead, D = S.dispersao, PA = S.pareto, EB = S.estado_bugs;
   [refs.slice(0, meio), refs.slice(meio)].forEach((col, k) => {
     s.addText(col.map((t, i) => ({ text: t, options: { breakLine: i < col.length - 1 } })), { x: MX + k * 6.2, y: 1.4, w: 5.9, h: 5.4, fontSize: 14, color: C.ink, paraSpaceAfter: 6, margin: 0, valign: "top", isTextBox: true });
   });
-  notas(s, "Lista completa, em ABNT, no relatório em PDF. A bibliografia básica e complementar do plano de ensino está na coluna da esquerda; à direita, as fontes atualizadas usadas nos exemplos reais.");
+  notas(s, "Lista completa, em ABNT, no relatório em PDF. Os oito primeiros itens são a bibliografia básica e complementar do plano de ensino; os demais são as fontes atualizadas usadas nos exemplos reais.");
 }
 // ------------------------------------------------------------------ 19 perguntas
 {
