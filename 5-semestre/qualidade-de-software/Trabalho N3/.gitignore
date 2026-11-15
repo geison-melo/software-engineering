@@ -1,0 +1,6 @@
+# Gerados ou baixados ao rodar os scripts de _apoio
+_apoio/node_modules/
+_apoio/.edge/
+_apoio/relatorio.html
+_apoio/__pycache__/
+~$*
