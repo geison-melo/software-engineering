@@ -7,6 +7,7 @@ Lê dados/*.csv (gerados por coletar_dados.py) e grava:
 import csv
 import json
 import math
+import os
 import statistics as st
 from collections import Counter
 from datetime import datetime
@@ -18,13 +19,19 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, Polygon
 
 BASE = Path(__file__).parent
-FIG = BASE / "figuras"
+# TEMA=slides gera as figuras no estilo da apresentação (pasta figuras_slides); o padrão é o do relatório
+TEMA = os.environ.get("TEMA", "relatorio")
+FIG = BASE / ("figuras_slides" if TEMA == "slides" else "figuras")
 FIG.mkdir(exist_ok=True)
 
 # Paleta do trabalho
 TEAL, TEAL_L, AMBER, INK, GRID, MUTED = "#0F4C5C", "#5F9EA0", "#E36414", "#1F2933", "#D9E2E5", "#5B6770"
+FILL_BOX, FILL_DIAM, BAR_SOFT, FONTE_FIG = "#E6F0F2", "#FDF0E7", "#A7C4C9", "Calibri"
+if TEMA == "slides":   # grafite + vermelho de carimbo
+    TEAL, TEAL_L, AMBER, INK, GRID, MUTED = "#1B1F23", "#8A949D", "#D9411E", "#1B1F23", "#E3E8EC", "#5C6670"
+    FILL_BOX, FILL_DIAM, BAR_SOFT, FONTE_FIG = "#FFF3B8", "#FBE4DC", "#C4CBD1", "Segoe UI"
 plt.rcParams.update({
-    "font.family": "Calibri", "font.size": 11, "axes.edgecolor": MUTED, "axes.labelcolor": INK,
+    "font.family": FONTE_FIG, "axes.unicode_minus": False, "font.size": 11, "axes.edgecolor": MUTED, "axes.labelcolor": INK,
     "xtick.color": MUTED, "ytick.color": MUTED, "axes.spines.top": False, "axes.spines.right": False,
     "axes.titleweight": "bold", "axes.titlesize": 13, "axes.titlecolor": INK,
 })
@@ -153,7 +160,7 @@ fig, ax = plt.subplots(figsize=(9, 4.8), dpi=200)
 cores = [TEAL if a <= 80.5 or i == 0 else TEAL_L for i, a in enumerate(acum)]
 # destaca as categorias até cruzar 80 %
 corte = next(i for i, a in enumerate(acum) if a >= 80)
-cores = [TEAL if i <= corte else "#A7C4C9" for i in range(len(itens))]
+cores = [TEAL if i <= corte else BAR_SOFT for i in range(len(itens))]
 x = range(len(itens))
 ax.bar(x, [c for _, c in itens], color=cores)
 for i, (_, c) in enumerate(itens):
@@ -206,7 +213,7 @@ def caixa(ax, x, y, txt, w=2.2, h=0.62, cor=TEAL, fc="white", bold=False):
 
 def losango(ax, x, y, txt, w=2.3, h=0.95):
     ax.add_patch(Polygon([(x, y + h / 2), (x + w / 2, y), (x, y - h / 2), (x - w / 2, y)], closed=True,
-                         fc="#FDF0E7", ec=AMBER, lw=1.6))
+                         fc=FILL_DIAM, ec=AMBER, lw=1.6))
     ax.text(x, y, txt, ha="center", va="center", fontsize=9, color=INK)
 
 
@@ -237,7 +244,7 @@ A, S1, B, S2 = 2.4, 5.9, 9.9, 13.4          # colunas: triagem, saídas, correç
 Y = [8.7, 7.3, 5.8, 4.3, 2.85, 1.45]
 ax.text(A, 9.4, "TRIAGEM", ha="center", fontsize=10, color=MUTED, fontweight="bold")
 ax.text(B, 9.4, "CORREÇÃO E ENTREGA", ha="center", fontsize=10, color=MUTED, fontweight="bold")
-caixa(ax, A, Y[0], "Usuário abre issue\n(template de bug)", fc="#E6F0F2", bold=True)
+caixa(ax, A, Y[0], "Usuário abre issue\n(template de bug)", fc=FILL_BOX, bold=True)
 losango(ax, A, Y[1], "Informações\nsuficientes?")
 losango(ax, A, Y[2], "Já existe\nissue igual?")
 losango(ax, A, Y[3], "Será\ncorrigido?")
@@ -250,7 +257,7 @@ losango(ax, B, Y[1], "CI (GitHub\nActions) passa?")
 losango(ax, B, Y[2], "Revisão do\nmantenedor ok?")
 caixa(ax, B, Y[3], "Merge na main\n(lead time → histograma)", w=2.6)
 caixa(ax, B, Y[4], "Release publicada")
-caixa(ax, B, Y[5], f"Issue fechada: corrigida\n({e['corrigidos']} issues)", w=2.6, fc="#E6F0F2", bold=True)
+caixa(ax, B, Y[5], f"Issue fechada: corrigida\n({e['corrigidos']} issues)", w=2.6, fc=FILL_BOX, bold=True)
 caixa(ax, S2, Y[1], "Ajusta o código e\nenvia novo commit", w=2.3, cor=MUTED)
 hw, hd = 1.15, 0.475   # meia largura / meia altura do losango
 # coluna de triagem
@@ -321,5 +328,6 @@ fig.tight_layout()
 fig.savefig(FIG / "ishikawa.png")
 plt.close(fig)
 
-json.dump(stats, open(BASE / "dados/stats.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+if TEMA != "slides":
+    json.dump(stats, open(BASE / "dados/stats.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 print(json.dumps(stats, ensure_ascii=False, indent=1))
